@@ -1,0 +1,34 @@
+{
+  "manifest_version": 3,
+  "name": "TransparentFee DMV",
+  "version": "1.3",
+  "description": "TransparentFee DMV helps you stay informed about surcharges at your favorite restaurants and bars in the DC, Maryland, and Virginia (DMV) area.",
+  "permissions": [
+    "scripting",
+    "tabs",
+    "activeTab",
+    "storage"
+  ],
+  "host_permissions": [
+    "*://*/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icon16.png",
+      "48": "icon48.png",
+      "128": "icon128.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'; connect-src 'self' https://www.dropbox.com https://*.dl.dropboxusercontent.com"
+  },
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  }
+}
