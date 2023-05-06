@@ -10,7 +10,7 @@ body {
 }
 
 a {
-    color: #4CAF50;
+    color: #FF6B6B;
     text-decoration: underline;
 }
 
@@ -25,19 +25,19 @@ h1 {
 h2 {
     font-weight: bold;
     font-size: 14px;
-    margin: 16px 0 4px 0; /* Updated margin */
+    margin: 16px 0 4px 0;
     padding: 0;
 }
 
 h3 {
     font-weight: bold;
     font-size: 12px;
-    margin: 16px 0 4px 0; /* Updated margin */
+    margin: 16px 0 4px 0;
     padding: 0;
 }
 
 p {
     font-size: 14px;
-    margin: 0 0 16px 0; /* Updated margin */
+    margin: 0 0 16px 0;
     padding: 0;
 }

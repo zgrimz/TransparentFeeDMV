@@ -1,3 +1,4 @@
+importScripts('papaparse.min.js');
 const CACHE_EXPIRY = 12 * 60 * 60 * 1000; // 12 hours in milliseconds
 
 let websitesCache = null;
@@ -6,8 +7,12 @@ let closedTabs = new Set();
 let tabUrls = {};
 
 function parseCSV(csvText) {
-  const rows = csvText.split('\n');
-  return rows.map((row) => row.split(',').map((cell) => cell.trim().replace(/"/g, '')));
+  const parseResult = Papa.parse(csvText, {
+    header: false,
+    skipEmptyLines: true,
+  });
+
+  return parseResult.data;
 }
 
 async function fetchRestaurantInformation() {
@@ -20,11 +25,14 @@ async function fetchRestaurantInformation() {
   const csvText = await response.text();
 
   const parseResult = parseCSV(csvText);
-  const fetchedWebsites = parseResult.map((row) => ({
-    domain: removeWwwPrefix(row[0]),
-    surchargeAmount: row[1],
-    feeLanguage: row[2],
-  }));
+  const fetchedWebsites = parseResult.reduce((accumulator, row) => {
+    const domain = removeWwwPrefix(row[0]);
+    accumulator[domain] = {
+      surchargeAmount: row[1],
+      feeLanguage: row[2],
+    };
+    return accumulator;
+  }, {});
   await saveToCache({ websites: fetchedWebsites, lastFetched: Date.now() });
 
   websitesCache = fetchedWebsites;
@@ -34,6 +42,7 @@ async function fetchRestaurantInformation() {
 
   return fetchedWebsites;
 }
+
 
 async function getFromCache(...keys) {
   return new Promise((resolve) => {
@@ -65,7 +74,7 @@ async function executeScript(tabId, code) {
 async function checkRestaurantWebsite(tabId, websites) {
   const currentUrl = new URL((await chrome.tabs.get(tabId)).url);
   const currentHostname = removeWwwPrefix(currentUrl.hostname);
-  const websiteData = websites.find((site) => currentHostname === site.domain);
+  const websiteData = websites[currentHostname];
 
   console.log("Checking restaurant website:", currentUrl, currentHostname, websiteData);
 
@@ -98,7 +107,7 @@ async function checkRestaurantWebsite(tabId, websites) {
 
         const message = iframeDocument.createElement('div');
         message.style.position = 'relative';
-        message.innerHTML = `<p style="font-family: Montserrat, sans-serif; font-weight: bold; font-size: 18px; margin: 0 0 4px 0; padding: 0; color: #182952;">Heads up!</p> <p style="font-family: Open Sans, sans-serif; font-weight: light; font-size: 14px; margin: 0; padding: 0;">People have reported that this establishment has service fees in addition to menu prices.</p> <span style="cursor:pointer; position: absolute; top: 0; right: 0; margin: 0; padding: 8px; color: #007A4D;">&times;</span>`;
+        message.innerHTML = `<p style="font-family: Montserrat, sans-serif; font-weight: bold; font-size: 18px; margin: 0 0 4px 0; padding: 0; color: #182952;">Heads up!</p> <p style="font-family: Open Sans, sans-serif; font-weight: light; font-size: 14px; margin: 0; padding: 0;">People have reported this establishment has a service fee in addition to menu prices.</p> <span style="cursor:pointer; position: absolute; top: 0; right: 0; margin: 0; padding: 8px; color: #007A4D;">&times;</span>`;
         message.style.padding = '16px';
         message.style.backgroundColor = '#FFFFFF';
         message.style.color = '#182952';
@@ -153,11 +162,10 @@ async function checkGoogleEntry(tabId, websites) {
           websiteButton.closest('.QqG1Sd').parentElement.insertAdjacentElement('beforeend', alertText);
         }
       },
-      args: [websites.map((site) => site.domain)],
+      args: [Object.keys(websites)],
     });
   }
 }
-
 
 
 chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
@@ -181,7 +189,7 @@ chrome.tabs.onRemoved.addListener(async (tabId) => {
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === 'checkCurrentTab') {
     checkCurrentTab(request.tabId, sendResponse);
-    return true; 
+    return true;
   }
 });
 
@@ -190,7 +198,7 @@ async function checkCurrentTab(tabId, sendResponse) {
   const currentUrl = new URL((await chrome.tabs.get(tabId)).url);
   const currentHostname = removeWwwPrefix(currentUrl.hostname);
 
-  const websiteData = websites.find((site) => currentHostname === site.domain);
+  const websiteData = websites[currentHostname];
 
   if (websiteData) {
     sendResponse({
@@ -202,4 +210,6 @@ async function checkCurrentTab(tabId, sendResponse) {
     sendResponse({ hasData: false });
   }
 }
-
+chrome.runtime.onInstalled.addListener(async () => {
+  await fetchRestaurantInformation();
+});
