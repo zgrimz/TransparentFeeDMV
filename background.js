@@ -97,7 +97,7 @@ async function checkRestaurantWebsite(tabId, websites) {
     // Inject the iframe with the message
     chrome.scripting.executeScript({
       target: { tabId },
-      function: function() {
+      function: function () {
         const isMessageClosed = sessionStorage.getItem('messageClosed');
         if (isMessageClosed) {
           return;
@@ -163,7 +163,7 @@ async function checkGoogleEntry(tabId, websites) {
     // Inject script to display an alert if the website is in the list of restaurants with surcharges
     chrome.scripting.executeScript({
       target: { tabId },
-      function: function(websites) {
+      function: function (websites) {
         function removeWwwPrefix(hostname) {
           return hostname.replace(/^www\./, '');
         }
@@ -176,13 +176,22 @@ async function checkGoogleEntry(tabId, websites) {
 
         // Check if the website is in the list of restaurants with surcharges
         if (websites.some((site) => removeWwwPrefix(site) === websiteHostname)) {
-          // Create and insert an alert message
-          const alertText = document.createElement('div');
-          alertText.innerHTML = 'Heads up! People have reported this establishment has a surcharge.</a>';
-          alertText.style.marginTop = '4px';
-          alertText.style.fontWeight = 'bold';
 
-          websiteButton.closest('.QqG1Sd').parentElement.insertAdjacentElement('beforeend', alertText);
+          // Identifier for the alert
+          const alertId = 'fee-alert-message';
+
+          // Check if the alert is already present
+          if (!document.getElementById(alertId)) {
+
+            // Create and insert an alert message
+            const alertText = document.createElement('div');
+            alertText.id = alertId;
+            alertText.innerHTML = 'Heads up! People have reported this establishment has a surcharge.';
+            alertText.style.marginTop = '4px';
+            alertText.style.fontWeight = 'bold';
+
+            websiteButton.closest('.QqG1Sd').parentElement.insertAdjacentElement('beforeend', alertText);
+          }
         }
       },
       args: [Object.keys(websites)],
