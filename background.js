@@ -24,7 +24,14 @@ function parseCSV(csvText) {
 async function fetchRestaurantInformation() {
   // Check if the cache is still valid
   if (websitesCache && lastFetched && Date.now() - lastFetched < CACHE_EXPIRY) {
+    console.log("Using global cached websites:", websitesCache);
     return websitesCache;
+  }
+
+  const cache = await getFromCache('websites', 'lastFetched');
+  if (cache.websites && cache.lastFetched && Date.now() - cache.lastFetched < CACHE_EXPIRY) {
+    console.log("Using local cached websites:", cache.websites);
+    return cache.websites;
   }
 
   // Fetch the CSV file
@@ -53,7 +60,7 @@ async function fetchRestaurantInformation() {
   return fetchedWebsites;
 }
 
-// Function to get data from the Chrome storage
+// Function to get dagetFromCacheta from the Chrome storage
 async function getFromCache(...keys) {
   return new Promise((resolve) => {
     chrome.storage.local.get(keys, (result) => {
