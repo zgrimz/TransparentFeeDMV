@@ -11,7 +11,7 @@ This extension aims to promote transparency, trust, and a more positive dining e
 * Caches fetched data for 12 hours to minimize the need for repeated network requests.
 
 ## Installation
-TransparentFee DMV is available on the Chrome Web Store here.
+TransparentFee DMV is available on the [Chrome Web Store here](https://chrome.google.com/webstore/detail/transparentfee-dmv/dkllokigbmjkjfociilfmhjedekehnod).
 
 Alternativly, you can follow these steps to install it via Chrome dev tools:
 * Download the ZIP file from this repository and extract it to your local machine.
