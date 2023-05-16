@@ -1,8 +1,10 @@
 importScripts('papaparse.min.js');
 const CACHE_EXPIRY = 12 * 60 * 60 * 1000; // 12 hours in milliseconds
 
-let websitesCache = null;
-let lastFetched = null;
+// Cache expiry duration: 12 hours in milliseconds
+const CACHE_EXPIRY = 12 * 60 * 60 * 1000;
+
+// Initialize global variables
 let closedTabs = new Set();
 let tabUrls = {};
 
@@ -16,8 +18,11 @@ function parseCSV(csvText) {
 }
 
 async function fetchRestaurantInformation() {
-  if (websitesCache && lastFetched && Date.now() - lastFetched < CACHE_EXPIRY) {
-    return websitesCache;
+  // Check if the cache is still valid
+  const cache = await getFromCache('websites', 'lastFetched');
+  if (cache.websites && cache.lastFetched && Date.now() - cache.lastFetched < CACHE_EXPIRY) {
+    console.log("Using local cached websites:", cache.websites);
+    return cache.websites;
   }
 
   const csvUrl = 'https://www.dropbox.com/s/0gt4i4g5hzzw2ia/database.csv?dl=1';
@@ -35,15 +40,12 @@ async function fetchRestaurantInformation() {
   }, {});
   await saveToCache({ websites: fetchedWebsites, lastFetched: Date.now() });
 
-  websitesCache = fetchedWebsites;
-  lastFetched = Date.now();
-
   console.log("Fetched websites:", fetchedWebsites);
 
   return fetchedWebsites;
 }
 
-
+// Function to get dagetFromCacheta from the Chrome storage
 async function getFromCache(...keys) {
   return new Promise((resolve) => {
     chrome.storage.local.get(keys, (result) => {
@@ -85,7 +87,7 @@ async function checkRestaurantWebsite(tabId, websites) {
 
     chrome.scripting.executeScript({
       target: { tabId },
-      function: function() {
+      function: function () {
         const isMessageClosed = sessionStorage.getItem('messageClosed');
 
         if (isMessageClosed) {
@@ -143,7 +145,7 @@ async function checkGoogleEntry(tabId, websites) {
   ) {
     chrome.scripting.executeScript({
       target: { tabId },
-      function: function(websites) {
+      function: function (websites) {
         function removeWwwPrefix(hostname) {
           return hostname.replace(/^www\./, '');
         }
@@ -154,12 +156,22 @@ async function checkGoogleEntry(tabId, websites) {
         const websiteHostname = removeWwwPrefix(websiteUrl.hostname);
 
         if (websites.some((site) => removeWwwPrefix(site) === websiteHostname)) {
-          const alertText = document.createElement('div');
-          alertText.innerHTML = 'Heads up! People have reported this establishment has a surcharge.</a>';
-          alertText.style.marginTop = '4px';
-          alertText.style.fontWeight = 'bold';
 
-          websiteButton.closest('.QqG1Sd').parentElement.insertAdjacentElement('beforeend', alertText);
+          // Identifier for the alert
+          const alertId = 'fee-alert-message';
+
+          // Check if the alert is already present
+          if (!document.getElementById(alertId)) {
+
+            // Create and insert an alert message
+            const alertText = document.createElement('div');
+            alertText.id = alertId;
+            alertText.innerHTML = 'Heads up! People have reported this establishment has a surcharge.';
+            alertText.style.marginTop = '4px';
+            alertText.style.fontWeight = 'bold';
+
+            websiteButton.closest('.QqG1Sd').parentElement.insertAdjacentElement('beforeend', alertText);
+          }
         }
       },
       args: [Object.keys(websites)],
