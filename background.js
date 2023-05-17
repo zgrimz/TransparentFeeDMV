@@ -1,5 +1,4 @@
 importScripts('papaparse.min.js');
-const CACHE_EXPIRY = 12 * 60 * 60 * 1000; // 12 hours in milliseconds
 
 // Cache expiry duration: 12 hours in milliseconds
 const CACHE_EXPIRY = 12 * 60 * 60 * 1000;

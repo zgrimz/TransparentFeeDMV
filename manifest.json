@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "TransparentFee DMV",
-  "version": "1.5.1",
+  "version": "1.5.1.1",
   "description": "Helps you stay informed about surcharges at restaurants and bars in the DC, Maryland, and Virginia area.",
   "permissions": [
     "scripting",
