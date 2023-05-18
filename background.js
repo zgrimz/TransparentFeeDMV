@@ -95,6 +95,7 @@ async function checkRestaurantWebsite(tabId, websites) {
         iframe.style.height = 'auto';
         iframe.style.maxWidth = '90%';
         iframe.style.boxSizing = 'border-box';
+        iframe.name = 'feeAlert';
         document.body.appendChild(iframe);
 
         const iframeDocument = iframe.contentWindow.document;
