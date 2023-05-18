@@ -57,5 +57,5 @@ test('Validate that iframe appears on site with fee', async () => {
 
   const frame = page.frames().find(frame => frame.name() === 'feeAlert');
 
-  expect(frame).not.toBeNull();
+  expect(frame).not.toBeUndefined();
 }, 30000);
