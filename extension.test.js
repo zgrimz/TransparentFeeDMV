@@ -51,8 +51,6 @@ test('Validate that iframe not present on site not in data set', async () => {
 test('Validate that iframe appears on site with fee', async () => {
   await page.goto('https://allsoulsbar.com');
 
-  const frameSelector = 'iframe[name="feeAlert"]';
-
   await new Promise((r) => setTimeout(r, 2000));
 
   const frame = page.frames().find(frame => frame.name() === 'feeAlert');

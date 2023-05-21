@@ -7,6 +7,7 @@ module.exports = {
         "commonjs": true,
         "jest/globals": true,
     },
+    "plugins": ["jest"],
     "extends": "eslint:recommended",
     "overrides": [
     ],
