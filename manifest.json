@@ -23,6 +23,12 @@
   "background": {
     "service_worker": "background.js"
   },
+  "web_accessible_resources": [
+    {
+      "resources": ["node_modules/papaparse/papaparse.min.js"],
+      "matches": ["<all_urls>"]
+    }
+  ],
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'self'; connect-src 'self' https://www.dropbox.com https://*.dl.dropboxusercontent.com"
   },

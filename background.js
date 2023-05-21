@@ -1,13 +1,13 @@
-importScripts('papaparse.min.js');
+importScripts('node_modules/papaparse/papaparse.min.js');
 
 // Cache expiry duration: 12 hours in milliseconds
 const CACHE_EXPIRY = 12 * 60 * 60 * 1000;
 
 // Initialize global variables
-let closedTabs = new Set();
 let tabUrls = {};
 
 function parseCSV(csvText) {
+  // eslint-disable-next-line no-undef
   const parseResult = Papa.parse(csvText, {
     header: false,
     skipEmptyLines: true,
@@ -20,7 +20,7 @@ async function fetchRestaurantInformation() {
   // Check if the cache is still valid
   const cache = await getFromCache('websites', 'lastFetched');
   if (cache.websites && cache.lastFetched && Date.now() - cache.lastFetched < CACHE_EXPIRY) {
-    console.log("Using local cached websites:", cache.websites);
+    console.log('Using local cached websites:', cache.websites);
     return cache.websites;
   }
 
@@ -39,7 +39,7 @@ async function fetchRestaurantInformation() {
   }, {});
   await saveToCache({ websites: fetchedWebsites, lastFetched: Date.now() });
 
-  console.log("Fetched websites:", fetchedWebsites);
+  console.log('Fetched websites:', fetchedWebsites);
 
   return fetchedWebsites;
 }
@@ -65,19 +65,12 @@ function removeWwwPrefix(hostname) {
   return hostname.replace(/^www\./, '');
 }
 
-async function executeScript(tabId, code) {
-  return chrome.scripting.executeScript({
-    target: { tabId },
-    function: new Function(code),
-  });
-}
-
 async function checkRestaurantWebsite(tabId, websites) {
   const currentUrl = new URL((await chrome.tabs.get(tabId)).url);
   const currentHostname = removeWwwPrefix(currentUrl.hostname);
   const websiteData = websites[currentHostname];
 
-  console.log("Checking restaurant website:", currentUrl, currentHostname, websiteData);
+  console.log('Checking restaurant website:', currentUrl, currentHostname, websiteData);
 
   if (websiteData) {
     // Set badge background color and text
@@ -102,13 +95,14 @@ async function checkRestaurantWebsite(tabId, websites) {
         iframe.style.height = 'auto';
         iframe.style.maxWidth = '90%';
         iframe.style.boxSizing = 'border-box';
+        iframe.name = 'feeAlert';
         document.body.appendChild(iframe);
 
         const iframeDocument = iframe.contentWindow.document;
 
         const message = iframeDocument.createElement('div');
         message.style.position = 'relative';
-        message.innerHTML = `<p style="font-family: Montserrat, sans-serif; font-weight: bold; font-size: 18px; margin: 0 0 4px 0; padding: 0; color: #182952;">Heads up!</p> <p style="font-family: Open Sans, sans-serif; font-weight: light; font-size: 14px; margin: 0; padding: 0;">People have reported this establishment has a service fee in addition to menu prices.</p> <span style="cursor:pointer; position: absolute; top: 0; right: 0; margin: 0; padding: 8px; color: #007A4D;">&times;</span>`;
+        message.innerHTML = '<p style="font-family: Montserrat, sans-serif; font-weight: bold; font-size: 18px; margin: 0 0 4px 0; padding: 0; color: #182952;">Heads up!</p> <p style="font-family: Open Sans, sans-serif; font-weight: light; font-size: 14px; margin: 0; padding: 0;">People have reported this establishment has a service fee in addition to menu prices.</p> <span style="cursor:pointer; position: absolute; top: 0; right: 0; margin: 0; padding: 8px; color: #007A4D;">&times;</span>';
         message.style.padding = '16px';
         message.style.backgroundColor = '#FFFFFF';
         message.style.color = '#182952';
@@ -136,7 +130,7 @@ async function checkRestaurantWebsite(tabId, websites) {
 
 async function checkGoogleEntry(tabId, websites) {
   const currentUrl = new URL((await chrome.tabs.get(tabId)).url);
-  console.log("Checking Google entry:", currentUrl);
+  console.log('Checking Google entry:', currentUrl);
 
   if (
     (currentUrl.hostname.includes('google.com') || currentUrl.hostname.includes('google.')) &&
@@ -179,7 +173,7 @@ async function checkGoogleEntry(tabId, websites) {
 }
 
 
-chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
+chrome.tabs.onUpdated.addListener(async (tabId, changeInfo) => {
   if (changeInfo.status === 'complete') {
     const websites = await fetchRestaurantInformation();
     checkRestaurantWebsite(tabId, websites);
