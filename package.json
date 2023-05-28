@@ -5,7 +5,8 @@
   "main": "background.js",
   "scripts": {
     "test": "npx eslint .",
-    "jest": "npx jest"
+    "jest": "npx jest",
+    "build": "npx webpack --config ./tests/webpack.config.testing.js"
   },
   "author": "",
   "license": "ISC",

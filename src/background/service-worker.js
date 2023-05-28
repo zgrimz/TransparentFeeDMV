@@ -1,7 +1,6 @@
 import Papa from 'papaparse';
 
-// Cache expiry duration: 12 hours in milliseconds
-const CACHE_EXPIRY = 12 * 60 * 60 * 1000;
+const CACHE_EXPIRY = process.env.CACHE_EXPIRY;
 
 // Initialize global variables
 let tabUrls = {};
@@ -24,7 +23,7 @@ async function fetchRestaurantInformation() {
     return cache.websites;
   }
 
-  const csvUrl = 'https://www.dropbox.com/s/0gt4i4g5hzzw2ia/database.csv?dl=1';
+  const csvUrl = process.env.CSV_URL;
   const response = await fetch(csvUrl);
   const csvText = await response.text();
 
@@ -67,7 +66,7 @@ function removeWwwPrefix(hostname) {
 
 async function checkRestaurantWebsite(tabId, websites) {
   const currentUrl = new URL((await chrome.tabs.get(tabId)).url);
-  const currentHostname = removeWwwPrefix(currentUrl.hostname);
+  const currentHostname = removeWwwPrefix(currentUrl.host);
   const websiteData = websites[currentHostname];
 
   console.log('Checking restaurant website:', currentUrl, currentHostname, websiteData);

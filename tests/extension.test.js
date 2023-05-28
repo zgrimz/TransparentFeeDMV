@@ -9,13 +9,27 @@ let servers;
 
 beforeAll(async () => {
 
-  servers = await setupDevServer({
-    command: 'http-server',
-    launchTimeout: 50000
-  });
-
   // Resolve the relative path to your extension
   const extensionPath = path.join(__dirname, '../dist');
+  const testDataPath = path.join(__dirname, './testdata');
+
+  servers = await setupDevServer([
+    {
+      command: 'http-server -p 8080',
+      launchTimeout: 50000,
+      port: 8080
+    },
+    {
+      command: 'http-server -p 8000',
+      launchTimeout: 50000,
+      port: 8000
+    },
+    {
+      command: 'http-server -p 5000 ' + testDataPath,
+      launchTimeout: 50000,
+      port: 5000
+    },
+  ]);
 
   // Launch a new browser instance
   browser = await puppeteer.launch({
@@ -39,7 +53,7 @@ afterAll(async () => {
 
 test('Validate that iframe not present on site not in data set', async () => {
   await page.goto('http://127.0.0.1:8080');
-  
+
   await new Promise((r) => setTimeout(r, 2000));
 
   const frame = page.frames().find(frame => frame.name() === 'feeAlert');
@@ -49,7 +63,7 @@ test('Validate that iframe not present on site not in data set', async () => {
 }, 30000);
 
 test('Validate that iframe appears on site with fee', async () => {
-  await page.goto('https://allsoulsbar.com');
+  await page.goto('http://127.0.0.1:8000');
 
   await new Promise((r) => setTimeout(r, 2000));
 

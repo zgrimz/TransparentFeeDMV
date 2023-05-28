@@ -43,13 +43,12 @@ module.exports = {
         {
           from: 'src/manifest.json',
           transform: function (content) {
-            console.log(process.env);
-
-            // generates the manifest file using the package.json version
-            return Buffer.from(JSON.stringify({
-              version: process.env.npm_package_version,
-              ...JSON.parse(content.toString())
-            }));
+            var manifestJson = JSON.parse(content.toString());
+            
+            manifestJson.content_security_policy.extension_pages += '; connect-src \'self\' '+  process.env.ALLOWED_CONNECT_SRC;
+            
+            manifestJson.version = process.env.npm_package_version;
+            return Buffer.from(JSON.stringify(manifestJson));
           }
         }
       ]
