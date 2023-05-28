@@ -1,3 +1,4 @@
+import './popup.css';
 chrome.tabs.query({ active: true, currentWindow: true }, ([tab]) => {
   chrome.runtime.sendMessage({ action: 'checkCurrentTab', tabId: tab.id }, (response) => {
     const messageContainer = document.getElementById('message-container');

@@ -5,9 +5,9 @@ module.exports = {
         "webextensions": true,
         "worker": true,
         "commonjs": true,
-        "jest/globals": true,
+        "node": true,
+
     },
-    "plugins": ["jest"],
     "extends": "eslint:recommended",
     "overrides": [
     ],
