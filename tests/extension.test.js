@@ -15,7 +15,7 @@ beforeAll(async () => {
   });
 
   // Resolve the relative path to your extension
-  const extensionPath = path.join(__dirname, '.');
+  const extensionPath = path.join(__dirname, '../dist');
 
   // Launch a new browser instance
   browser = await puppeteer.launch({
