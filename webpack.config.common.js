@@ -45,9 +45,8 @@ module.exports = {
           transform: function (content) {
             console.log(process.env);
 
-            // generates the manifest file using the package.json informations
+            // generates the manifest file using the package.json version
             return Buffer.from(JSON.stringify({
-              description: process.env.npm_package_description,
               version: process.env.npm_package_version,
               ...JSON.parse(content.toString())
             }));

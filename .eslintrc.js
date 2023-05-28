@@ -1,13 +1,9 @@
 module.exports = {
     "env": {
-        "browser": true,
-        "es2021": true,
-        "webextensions": true,
-        "worker": true,
-        "commonjs": true,
         "node": true,
 
     },
+    "ignorePatterns": ["dist/*"],
     "extends": "eslint:recommended",
     "overrides": [
     ],
