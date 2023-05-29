@@ -1,35 +1,16 @@
 const puppeteer = require('puppeteer');
 const path = require('path');
-const { setup: setupDevServer, teardown: teardownDevServer } = require('jest-dev-server');
-
+const { startServers, stopServers } = require('../server');
 
 let browser;
 let page;
 let servers;
 
 beforeAll(async () => {
+  servers = await startServers();
 
   // Resolve the relative path to your extension
-  const extensionPath = path.join(__dirname, '../dist');
-  const testDataPath = path.join(__dirname, './testdata');
-
-  servers = await setupDevServer([
-    {
-      command: 'http-server -p 8080',
-      launchTimeout: 50000,
-      port: 8080
-    },
-    {
-      command: 'http-server -p 8000',
-      launchTimeout: 50000,
-      port: 8000
-    },
-    {
-      command: 'http-server -p 5000 ' + testDataPath,
-      launchTimeout: 50000,
-      port: 5000
-    },
-  ]);
+  const extensionPath = path.join(__dirname, '../../dist');
 
   // Launch a new browser instance
   browser = await puppeteer.launch({
@@ -46,9 +27,10 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
+  await stopServers(servers);
+
   // Close the browser after running tests
   await browser.close();
-  await teardownDevServer(servers);
 });
 
 test('Validate that iframe not present on site not in data set', async () => {

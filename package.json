@@ -4,9 +4,13 @@
   "description": "Helps you stay informed about surcharges at restaurants and bars in the DC, Maryland, and Virginia area.",
   "main": "background.js",
   "scripts": {
-    "test": "npx eslint .",
-    "jest": "npx jest",
-    "build": "npx webpack --config ./tests/webpack.config.testing.js"
+    "test": "npm run test:unit && npm run test:e2e",
+    "test:e2e": "npm run build:development && npx jest --testPathPattern='tests/e2e'",
+    "test:unit": " npx jest --testPathPattern='tests/unit'",
+    "lint": "npx eslint .",
+    "build:development": "npm run lint && npx webpack --config ./tests/webpack.config.testing.js",
+    "build:production": "npm run lint && npx webpack --config ./webpack.config.prod.js",
+    "testServers": "node ./tests/runTestServers.js"
   },
   "author": "",
   "license": "ISC",
@@ -26,6 +30,7 @@
     "jest": "^29.5.0",
     "jest-dev-server": "^8.0.5",
     "mini-css-extract-plugin": "^2.7.6",
+    "node-fetch": "^2.6.11",
     "puppeteer": "^20.2.1",
     "webpack": "^5.83.1",
     "webpack-cli": "^5.1.1",

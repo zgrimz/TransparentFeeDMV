@@ -1,19 +1,9 @@
-import Papa from 'papaparse';
+import { removeWwwPrefix, getRestarauntInfoFromCsv } from './utils';
 
 const CACHE_EXPIRY = process.env.CACHE_EXPIRY;
 
 // Initialize global variables
 let tabUrls = {};
-
-function parseCSV(csvText) {
-  // eslint-disable-next-line no-undef
-  const parseResult = Papa.parse(csvText, {
-    header: false,
-    skipEmptyLines: true,
-  });
-
-  return parseResult.data;
-}
 
 async function fetchRestaurantInformation() {
   // Check if the cache is still valid
@@ -23,19 +13,8 @@ async function fetchRestaurantInformation() {
     return cache.websites;
   }
 
-  const csvUrl = process.env.CSV_URL;
-  const response = await fetch(csvUrl);
-  const csvText = await response.text();
+  var fetchedWebsites = await getRestarauntInfoFromCsv();
 
-  const parseResult = parseCSV(csvText);
-  const fetchedWebsites = parseResult.reduce((accumulator, row) => {
-    const domain = removeWwwPrefix(row[0]);
-    accumulator[domain] = {
-      surchargeAmount: row[1],
-      feeLanguage: row[2],
-    };
-    return accumulator;
-  }, {});
   await saveToCache({ websites: fetchedWebsites, lastFetched: Date.now() });
 
   console.log('Fetched websites:', fetchedWebsites);
@@ -58,10 +37,6 @@ async function saveToCache(data) {
       resolve();
     });
   });
-}
-
-function removeWwwPrefix(hostname) {
-  return hostname.replace(/^www\./, '');
 }
 
 async function checkRestaurantWebsite(tabId, websites) {
