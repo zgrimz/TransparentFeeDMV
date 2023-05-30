@@ -14,7 +14,7 @@ This extension aims to promote transparency, trust, and a more positive dining e
 TransparentFee DMV is available on the [Chrome Web Store here](https://chrome.google.com/webstore/detail/transparentfee-dmv/dkllokigbmjkjfociilfmhjedekehnod).
 
 Alternativly, you can follow these steps to install it via Chrome dev tools:
-* Download the ZIP file from this repository and extract it to your local machine.
+* Download the latest ZIP file from this repository's [releases page](https://github.com/zgrimz/TransparentFeeDMV/releases) and extract it to your local machine.
 * Open the Chrome browser and navigate to chrome://extensions/.
 * Enable Developer mode by clicking the toggle switch located in the top right corner.
 * Click Load unpacked and select the extension's directory.
@@ -25,3 +25,14 @@ After installation, the extension will automatically fetch data about establishm
 
 ## Support
 If you encounter any issues while using the TransparentFee DMV Chrome Extension, please create an issue on this GitHub repository. We'll do our best to resolve the issue as quickly as possible.
+
+## Contributing
+If you'd like to contribute to the TransparentFee DMV Chrome Extension, please fork this repository and submit a pull request with your changes. We'll review your changes and merge them into the main branch if they meet our standards.
+
+### Development
+To get started with development, follow these steps:
+* Clone this repository to your local machine.
+* Install node.js and npm.
+* Run `npm install` to install the project's dependencies.
+* Run `npm run build:production` to build the project.
+* Follow the steps in the Installation section to install the extension in Chrome, selecting the `dist` directory as the extension's directory.
