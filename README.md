@@ -1,3 +1,4 @@
+TransparentFeeDMV is no longer maintained as of 2024.
 # TransparentFeeDMV
 TransparentFee DMV is a Chrome Extension designed to help consumers stay informed about service fees and surcharges at restaurants and bars in the DC, Maryland, and Virginia (DMV) area. With the rising popularity of service fees and surcharges, it's more important than ever to know what you're paying for.
 
